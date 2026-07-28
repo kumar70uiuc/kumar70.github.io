@@ -7,7 +7,6 @@ const state = {
   completedData: []
 };
 
-
 const SVG = {
   width: 900,
   height: 420,
@@ -50,13 +49,13 @@ const countryAliases = {
 
 const countryColors = {
   Brazil: "#009C3B",
-  Germany: "#DD0000",
-  Italy: "#003399",
+  Germany: "#1F1F1F",
+  Italy: "#00A3E0",
   Argentina: "#74ACDF",
-  France: "#002395",
+  France: "#5B2C83",
   Uruguay: "#5AAAA6",
-  England: "#CF142B",
-  Spain: "#AA151B"
+  England: "#1E3A8A",
+  Spain: "#FF6F00"
 };
 
 function normalizeCountry(country) {

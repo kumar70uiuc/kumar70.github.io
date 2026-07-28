@@ -1,7 +1,14 @@
 function renderScene1(g, data) {
     const winsMap = {};
+    const winsYearsMap = {};
     data.forEach(d => {
       winsMap[d.Winner] = (winsMap[d.Winner] || 0) + 1;
+      if (!winsYearsMap[d.Winner]) winsYearsMap[d.Winner] = [];
+      winsYearsMap[d.Winner].push(d.Year);
+    });
+
+    Object.keys(winsYearsMap).forEach((country) => {
+      winsYearsMap[country] = [...new Set(winsYearsMap[country])].sort((a, b) => a - b);
     });
   
     const winsData = Object.entries(winsMap)
@@ -34,8 +41,12 @@ function renderScene1(g, data) {
       .attr("rx", 4)
       .attr("fill", d => getCountryColor(d.country))
       .on("mouseover", function(event, d) {
+        const winningYears = winsYearsMap[d.country] || [];
         tooltip.style("opacity", 1)
-          .html(`<strong>${d.country}</strong><br/>🏆 ${d.wins} World Cup${d.wins > 1 ? "s" : ""}`)
+          .html(
+            `<strong>${d.country}</strong><br/>` +
+            `📅 Winning years: ${winningYears.join(", ")}`
+          )
           .style("left", (event.offsetX + 12) + "px")
           .style("top",  (event.offsetY - 28) + "px");
       })

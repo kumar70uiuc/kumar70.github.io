@@ -48,7 +48,8 @@ function renderScene3(g, data) {
             d3.select(this).attr("stroke", "#d4a017");
             tooltip.style("opacity", 1)
               .html(
-                `<strong>${d.Year} — ${d.Host}</strong><br/>` +
+                `<strong>${d.Year}</strong><br/>` +
+                `🏟️ Host: ${d.Host}<br/>` +
                 `🏆 ${d.Winner}<br/>` +
                 `⚽ Goals: ${d.GoalsScored} in ${d.Matches} games<br/>` +
                 `📊 Avg/Game: ${d.AvgGoalsPerGame}<br/>` +
@@ -91,18 +92,53 @@ function renderScene3(g, data) {
   
     drawDots(completedData);
   
+    // Store drawDots on the g node for filter updates
     g.node().__drawDots = drawDots;
 
-    g.selectAll(".year-label")
-      .data(completedData)
-      .join("text")
-      .attr("class","year-label")
-      .attr("x", d => x(d.Year))
-      .attr("y", d => y(d.AvgGoalsPerGame) - r(d.Teams) - 4)
-      .attr("text-anchor","middle")
-      .attr("fill","#a0b4cc")
-      .attr("font-size","10px")
-      .text(d => d.Year);
+      // ── Year and host labels ─────────────────────────────────────
+      function drawYearHostLabels(filteredData) {
+        const labels = g.selectAll(".year-host-label")
+          .data(filteredData, d => d.Year);
+
+        const enter = labels.enter()
+          .append("g")
+          .attr("class", "year-host-label")
+          .attr("transform", d => `translate(${x(d.Year)}, ${y(d.AvgGoalsPerGame) - r(d.Teams) - 6})`)
+          .attr("opacity", 0);
+
+        enter.append("text")
+          .attr("class", "year-label")
+          .attr("text-anchor", "middle")
+          .attr("fill", "#a0b4cc")
+          .attr("font-size", "10px")
+          .text(d => d.Year);
+
+        enter.append("text")
+          .attr("class", "host-label")
+          .attr("text-anchor", "middle")
+          .attr("fill", "#8fb0d0")
+          .attr("font-size", "8px")
+          .attr("dy", 11)
+          .text(d => d.Host);
+
+        enter.transition().duration(450).attr("opacity", 1);
+
+        labels
+          .transition().duration(450)
+          .attr("transform", d => `translate(${x(d.Year)}, ${y(d.AvgGoalsPerGame) - r(d.Teams) - 6})`)
+          .attr("opacity", 1);
+
+        labels.select(".year-label").text(d => d.Year);
+        labels.select(".host-label").text(d => d.Host);
+
+        labels.exit()
+          .transition().duration(250)
+          .attr("opacity", 0)
+          .remove();
+      }
+
+      drawYearHostLabels(completedData);
+      g.node().__drawYearHostLabels = drawYearHostLabels;
   
     g.append("g").attr("class","axis")
       .attr("transform",`translate(0,${SVG.innerHeight})`)
@@ -155,6 +191,9 @@ function renderScene3(g, data) {
   
     const drawDots = g.node().__drawDots;
     if (drawDots) drawDots(filtered);
+
+    const drawYearHostLabels = g.node().__drawYearHostLabels;
+    if (drawYearHostLabels) drawYearHostLabels(filtered);
   
     d3.selectAll(".filter-btn").classed("active", false);
     d3.selectAll(".filter-btn").filter(function() {

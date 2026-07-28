@@ -1,12 +1,25 @@
 function renderScene2(g, data) {
     const tooltip = d3.select("#tooltip");
+    const sceneData = data
+      .filter(d => d.Year <= 2026)
+      .sort((a, b) => a.Year - b.Year);
+
+    const clipId = "scene2-plot-clip";
+    g.append("clipPath")
+      .attr("id", clipId)
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", SVG.innerWidth)
+      .attr("height", SVG.innerHeight);
   
     const x = d3.scaleLinear()
-      .domain([d3.min(data, d => d.Year) - 2, d3.max(data, d => d.Year) + 2])
-      .range([0, SVG.innerWidth]);
+      .domain([1930, 2026])
+      .range([0, SVG.innerWidth])
+      .clamp(true);
   
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.GoalsScored) + 10])
+      .domain([0, d3.max(sceneData, d => d.GoalsScored) + 10])
       .range([SVG.innerHeight, 0]);
   
     g.append("g").attr("class", "grid")
@@ -18,10 +31,11 @@ function renderScene2(g, data) {
       .curve(d3.curveMonotoneX);
   
     const path = g.append("path")
-      .datum(data)
+      .datum(sceneData)
       .attr("fill", "none")
       .attr("stroke", "#d4a017")
       .attr("stroke-width", 2.5)
+      .attr("clip-path", `url(#${clipId})`)
       .attr("d", line);
   
     const totalLength = path.node().getTotalLength();
@@ -37,12 +51,13 @@ function renderScene2(g, data) {
       .curve(d3.curveMonotoneX);
   
     g.append("path")
-      .datum(data)
+      .datum(sceneData)
       .attr("fill", "rgba(212,160,23,0.08)")
+      .attr("clip-path", `url(#${clipId})`)
       .attr("d", area);
   
     g.selectAll(".dot")
-      .data(data)
+      .data(sceneData)
       .join("circle")
       .attr("class", "dot")
       .attr("cx", d => x(d.Year))
@@ -56,7 +71,8 @@ function renderScene2(g, data) {
         d3.select(this).attr("r", 9);
         tooltip.style("opacity", 1)
           .html(
-            `<strong>${d.Year} — ${d.Host}</strong><br/>` +
+            `<strong>${d.Year}</strong><br/>` +
+            `🏟️ Host: ${d.Host}<br/>` +
             `🏆 Winner: ${d.Winner}<br/>` +
             `⚽ Goals: ${d.GoalsScored}<br/>` +
             `📊 Avg/Game: ${d.AvgGoalsPerGame}`
@@ -77,7 +93,9 @@ function renderScene2(g, data) {
   
     g.append("g").attr("class", "axis")
       .attr("transform", `translate(0,${SVG.innerHeight})`)
-      .call(d3.axisBottom(x).tickFormat(d3.format("d")).ticks(11));
+      .call(d3.axisBottom(x)
+        .tickValues([...d3.range(1930, 2030, 10), 2026])
+        .tickFormat(d3.format("d")));
   
     g.append("g").attr("class", "axis")
       .call(d3.axisLeft(y));
@@ -94,6 +112,7 @@ function renderScene2(g, data) {
       .text("Total Goals Scored");
   
     const peakYear = data.reduce((best, curr) => {
+      if (curr.Year > 2026) return best;
       if (!best || curr.GoalsScored > best.GoalsScored) return curr;
       return best;
     }, null);
@@ -101,8 +120,8 @@ function renderScene2(g, data) {
       drawAnnotation(g, {
         x: x(peakYear.Year), y: y(peakYear.GoalsScored),
         dx: 60, dy: -50,
-        title: `${peakYear.Year} ${peakYear.Host}`,
-        label: `${peakYear.GoalsScored} goals in ${peakYear.Matches} matches`
+        title: `${peakYear.Year}`,
+        label: `Host: ${peakYear.Host}. ${peakYear.GoalsScored} goals`
       });
     }, 1800);
   
