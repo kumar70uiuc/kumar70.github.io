@@ -91,11 +91,8 @@ function renderScene3(g, data) {
     }
   
     drawDots(completedData);
-  
-    // Store drawDots on the g node for filter updates
-    g.node().__drawDots = drawDots;
+      g.node().__drawDots = drawDots;
 
-      // ── Year and host labels ─────────────────────────────────────
       function drawYearHostLabels(filteredData) {
         const labels = g.selectAll(".year-host-label")
           .data(filteredData, d => d.Year);
