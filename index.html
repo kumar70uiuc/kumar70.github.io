@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FIFA World Cup: A Visual History</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <header>
+    <h1>⚽ FIFA World Cup: A Visual History</h1>
+    <div id="scene-indicator">Scene <span id="current-scene-num">1</span> of 3</div>
+  </header>
+
+  <main>
+    <div id="scene-title-box">
+      <h2 id="scene-title">Loading...</h2>
+      <p id="scene-subtitle"></p>
+    </div>
+
+    <div id="chart-container">
+      <svg id="main-svg"></svg>
+      <div id="tooltip"></div>
+    </div>
+
+    <div id="annotation-box">
+      <span id="annotation-icon">📌</span>
+      <span id="annotation-text"></span>
+    </div>
+
+    <div id="controls">
+      <div id="filter-container"></div>
+      <div id="nav-buttons">
+        <button id="prev-btn" onclick="prevScene()" disabled>← Previous</button>
+        <button id="next-btn" onclick="nextScene()">Next →</button>
+      </div>
+    </div>
+  </main>
+
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://rawcdn.githack.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+
+  <script src="js/parameters.js"></script>
+  <script src="js/annotations.js"></script>
+  <script src="scenes/scene1.js"></script>
+  <script src="scenes/scene2.js"></script>
+  <script src="scenes/scene3.js"></script>
+  <script src="js/triggers.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
