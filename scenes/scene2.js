@@ -111,7 +111,7 @@ function renderScene2(g, data) {
       .attr("x", -SVG.innerHeight / 2).attr("y", -52)
       .text("Total Goals Scored");
   
-    const peakYear = data.reduce((best, curr) => {
+    const peakYear = sceneData.reduce((best, curr) => {
       if (curr.Year > 2026) return best;
       if (!best || curr.GoalsScored > best.GoalsScored) return curr;
       return best;
@@ -119,9 +119,9 @@ function renderScene2(g, data) {
     setTimeout(() => {
       drawAnnotation(g, {
         x: x(peakYear.Year), y: y(peakYear.GoalsScored),
-        dx: 60, dy: -50,
+        dx: -140, dy: -25,
         title: `${peakYear.Year}`,
-        label: `Host: ${peakYear.Host}. ${peakYear.GoalsScored} goals`
+        label: `Host: ${peakYear.Host}. ${peakYear.GoalsScored} goals, the most in the last World Cup.`
       });
     }, 1800);
   
