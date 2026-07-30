@@ -83,7 +83,19 @@ function renderScene1(g, data) {
       .attr("text-anchor","middle")
       .attr("x", SVG.innerWidth / 2).attr("y", SVG.innerHeight + 48)
       .text("Number of World Cup Titles");
-  
+    
+    const brazilWins = winsData.find(d => d.country === "Brazil");
+        if (brazilWins) {
+          drawAnnotation(g, {
+            x: x(brazilWins.wins),
+            y: y(brazilWins.country) + y.bandwidth() / 2,
+            dx: -155,
+            dy: -30,
+            title: "Brazil",
+            label: "With 5 titles, Brazil has dominated the World Cup."
+          });
+        }
+    
     setAnnotationText(
       "<strong>Brazil leads all nations with 5 World Cup titles.</strong> " +
       "A small group of countries — Brazil, Germany, Italy, and Argentina — " +
